@@ -11,6 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "app/components/ui/avatar";
 import { Search } from "lucide-react";
 import { Input } from "app/components/ui/input";
+import { Button } from "app/components/ui/button";
 
 export function Navbar() {
   return (
@@ -32,7 +33,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Right: NavigationMenu for Home dropdown and Avatar */}
+      {/* Right: NavigationMenu for Home dropdown, Auth buttons, and Avatar */}
       <div className="flex items-center gap-4">
         <NavigationMenu className="relative">
           <NavigationMenuList>
@@ -87,6 +88,14 @@ export function Navbar() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+
+        {/* Auth Buttons */}
+        <Button asChild variant="outline">
+          <Link to="/signup">Sign Up</Link>
+        </Button>
+        <Button asChild>
+          <Link to="/signin">Sign In</Link>
+        </Button>
 
         <Avatar className="h-8 w-8 cursor-pointer">
           <AvatarImage src="/favicon.ico" />

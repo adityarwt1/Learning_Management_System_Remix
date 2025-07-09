@@ -28,7 +28,7 @@ export default function HomePage() {
         </div>
       </main>
       <footer className="bg-gray-800 text-white p-6 text-center">
-        <p>© 2023 Your Company. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Vote LMS. All rights reserved.</p>
       </footer>
     </div>
   );
