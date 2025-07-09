@@ -5,7 +5,18 @@ import { Button } from "app/components/ui/button";
 import { Label } from "app/components/ui/label";
 import { Card } from "app/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "app/components/ui/radio-group";
+import { ActionFunction, ActionFunctionArgs } from "@remix-run/node";
 
+export const action: ActionFunction = async ({
+  request,
+}: ActionFunctionArgs) => {
+  const formdata = await request.formData();
+  const type = formdata.get("_signup");
+  console.log(formdata);
+  return {
+    data: "aditya rawat",
+  };
+};
 export default function SignUpPage() {
   // If you want to handle errors, you can use useActionData here
   // const actionData = useActionData();
@@ -44,7 +55,7 @@ export default function SignUpPage() {
               </div>
             </RadioGroup>
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" name="_signup" className="w-full">
             Sign Up
           </Button>
         </Form>
