@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Form, useActionData } from "@remix-run/react";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
@@ -40,8 +39,8 @@ export const action: ActionFunction = async ({ request }) => {
 
       await user.save();
       return redirect("/dashboard");
-    } catch (err: any) {
-      console.error(err.message);
+    } catch (err) {
+      console.log((err as Error).message);
       return json({ error: "Something went wrong" }, { status: 500 });
     }
   }

@@ -1,5 +1,3 @@
-import { Navbar } from "~/components/Navbar";
-
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
@@ -10,7 +8,7 @@ export default function HomePage() {
           </h1>
           <p className="text-lg text-gray-600 mb-8">
             This is a sample page to demonstrate the fixed navbar. The navbar
-            now has a proper height and doesn't cover the entire screen.
+            now has a proper height and doesn&apost cover the entire screen.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map((item) => (
