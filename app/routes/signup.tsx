@@ -1,30 +1,66 @@
 import * as React from "react";
 import { Form, useActionData } from "@remix-run/react";
-import { Input } from "app/components/ui/input";
-import { Button } from "app/components/ui/button";
-import { Label } from "app/components/ui/label";
-import { Card } from "app/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "app/components/ui/radio-group";
-import { ActionFunction, ActionFunctionArgs } from "@remix-run/node";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
+import { Label } from "~/components/ui/label";
+import { Card } from "~/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 
-export const action: ActionFunction = async ({
-  request,
-}: ActionFunctionArgs) => {
-  const formdata = await request.formData();
-  const type = formdata.get("_signup");
-  console.log(formdata);
-  return {
-    data: "aditya rawat",
-  };
+import { ActionFunction, json, redirect } from "@remix-run/node";
+import { connectDB } from "~/lib/mongodb";
+import User from "~/models/User";
+import bcrypt from "bcrypt";
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  if (formData.has("_signup")) {
+    const name = formData.get("name")?.toString();
+    const email = formData.get("email")?.toString();
+    const password = formData.get("password")?.toString();
+    const role = formData.get("role")?.toString();
+    if (!name || !email || !password || !role) {
+      return json({ error: "All fields are required." }, { status: 400 });
+    }
+
+    try {
+      await connectDB();
+
+      const existing = await User.findOne({ email });
+      if (existing) {
+        return json({ error: "Email already exists" }, { status: 400 });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new User({
+        name,
+        email,
+        password: hashedPassword,
+        role,
+      });
+
+      await user.save();
+      return redirect("/dashboard");
+    } catch (err: any) {
+      console.error(err.message);
+      return json({ error: "Something went wrong" }, { status: 500 });
+    }
+  }
+
+  return json({ error: "Invalid form action" }, { status: 400 });
 };
+
 export default function SignUpPage() {
-  // If you want to handle errors, you can use useActionData here
-  // const actionData = useActionData();
+  const actionData = useActionData<typeof action>();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Sign Up</h1>
+
+        {actionData?.error && (
+          <p className="text-red-500 text-center">{actionData.error}</p>
+        )}
+
         <Form method="post" className="space-y-4">
           <div>
             <Label htmlFor="name">Name</Label>
@@ -55,7 +91,12 @@ export default function SignUpPage() {
               </div>
             </RadioGroup>
           </div>
-          <Button type="submit" name="_signup" className="w-full">
+          <Button
+            type="submit"
+            name="_signup"
+            value="signup"
+            className="w-full"
+          >
             Sign Up
           </Button>
         </Form>

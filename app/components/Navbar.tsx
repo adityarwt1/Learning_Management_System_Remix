@@ -90,7 +90,7 @@ export function Navbar() {
         </NavigationMenu>
 
         <Avatar className="h-8 w-8 cursor-pointer">
-          <AvatarImage src="/avatar.png" />
+          <AvatarImage src="/favicon.ico" />
           <AvatarFallback>P</AvatarFallback>
         </Avatar>
       </div>
