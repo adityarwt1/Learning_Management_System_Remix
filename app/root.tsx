@@ -33,9 +33,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="w-full ">
-        <div className="bg-green-700">
-          <Navbar />
-        </div>
+        <Navbar />
         {children}
         <ScrollRestoration />
         <Scripts />
