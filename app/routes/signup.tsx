@@ -1,4 +1,4 @@
-import { Form, useActionData, useNavigation } from "@remix-run/react";
+import { Form, useActionData, useNavigation, Link } from "@remix-run/react";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
@@ -108,6 +108,21 @@ export default function SignUpPage() {
             {loading ? "Signing Up..." : "Sign Up"}
           </Button>
         </Form>
+
+        {/* OR separator and Sign In link */}
+        <div className="flex items-center my-2">
+          <div className="flex-grow border-t border-gray-200" />
+          <span className="mx-2 text-gray-400 text-sm">or</span>
+          <div className="flex-grow border-t border-gray-200" />
+        </div>
+        <div className="text-center">
+          <Link
+            to="/signin"
+            className="text-zinc-950 hover:underline font-medium"
+          >
+            Sign In
+          </Link>
+        </div>
       </Card>
     </div>
   );
