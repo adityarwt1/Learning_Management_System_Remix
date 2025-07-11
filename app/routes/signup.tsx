@@ -9,6 +9,7 @@ import { ActionFunction, json, redirect } from "@remix-run/node";
 import { connectDB } from "~/lib/mongodb";
 import User from "~/models/User";
 import bcrypt from "bcrypt";
+import { cookieToken } from "~/utils/cookie.server";
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -38,7 +39,12 @@ export const action: ActionFunction = async ({ request }) => {
       });
 
       await user.save();
-      return redirect("/dashboard");
+
+      return redirect("/dashboard", {
+        headers: {
+          "Set-Cookie": await cookieToken.serialize(user),
+        },
+      });
     } catch (err) {
       console.log((err as Error).message);
       return json({ error: "Something went wrong" }, { status: 500 });
