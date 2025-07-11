@@ -7,7 +7,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const token = await cookieToken.parse(cookieHeader);
 
   if (!token) {
-    return redirect("/signin");      
+    return redirect("/signin");
   }
 
   return json({ message: "Welcome back!" });

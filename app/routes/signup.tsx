@@ -1,11 +1,11 @@
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useNavigation } from "@remix-run/react";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Card } from "~/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 
-import { ActionFunction, json, redirect } from "@remix-run/node";
+import { ActionFunction, json, MetaFunction, redirect } from "@remix-run/node";
 import { connectDB } from "~/lib/mongodb";
 import User from "~/models/User";
 import bcrypt from "bcrypt";
@@ -56,6 +56,8 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function SignUpPage() {
   const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
+  const loading = navigation.state === "submitting";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -101,11 +103,16 @@ export default function SignUpPage() {
             name="_signup"
             value="signup"
             className="w-full"
+            disabled={loading}
           >
-            Sign Up
+            {loading ? "Signing Up..." : "Sign Up"}
           </Button>
         </Form>
       </Card>
     </div>
   );
 }
+
+export const meta: MetaFunction = ({ params }) => {
+  return [{ title: "Sign Up - VOTE LMS" }];
+};
