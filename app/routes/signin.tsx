@@ -4,9 +4,12 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Card } from "~/components/ui/card";
-import { ActionFunction, ActionFunctionArgs } from "@remix-run/node";
+import { ActionFunction } from "@remix-run/node";
 import User from "~/models/User";
 import bcrypt from "bcrypt";
+import { cookieToken } from "~/utils/cookie.server";
+import { redirect, json } from "@remix-run/node";
+import { connectDB } from "~/lib/mongodb";
 
 export const action: ActionFunction = async ({ request }) => {
   const formdata = await request.formData();
@@ -15,20 +18,32 @@ export const action: ActionFunction = async ({ request }) => {
     const password = formdata.get("password")?.toString();
 
     if (!email || !password) {
-      return { error: "Email and password are required." };
+      return json(
+        { error: "Email and password are required." },
+        { status: 400 }
+      );
     }
-
+    await connectDB();
     const user = await User.findOne({ email });
     if (!user) {
-      return { error: "Invalid email or password." };
+      return json({ error: "Invalid email or password." }, { status: 400 });
     }
 
     const isPasswordTrue = await bcrypt.compare(password, user.password);
+    if (!isPasswordTrue) {
+      return json({ error: "Invalid email or password." }, { status: 400 });
+    }
+
+    // Success: set cookie and redirect
+    return redirect("/dashboard", {
+      headers: {
+        "Set-Cookie": await cookieToken.serialize(user),
+      },
+    });
   }
-  return {
-    error: "this is the erro",
-  };
+  return json({ error: "Invalid form action." }, { status: 400 });
 };
+
 export default function SignInPage() {
   const actionData = useActionData<typeof action>();
 
