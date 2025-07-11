@@ -4,10 +4,27 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { Card } from "~/components/ui/card";
-import { ActionFunction } from "@remix-run/node";
+import { ActionFunction, ActionFunctionArgs } from "@remix-run/node";
+import User from "~/models/User";
+import bcrypt from "bcrypt";
 
-export const action: ActionFunction = async () => {
-    
+export const action: ActionFunction = async ({ request }) => {
+  const formdata = await request.formData();
+  if (formdata.has("signin")) {
+    const email = formdata.get("email")?.toString();
+    const password = formdata.get("password")?.toString();
+
+    if (!email || !password) {
+      return { error: "Email and password are required." };
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return { error: "Invalid email or password." };
+    }
+
+    const isPasswordTrue = await bcrypt.compare(password, user.password);
+  }
   return {
     error: "this is the erro",
   };
@@ -33,7 +50,7 @@ export default function SignInPage() {
             <Label htmlFor="password">Password</Label>
             <Input id="password" name="password" type="password" required />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" name="signin" className="w-full">
             Sign In
           </Button>
         </Form>
