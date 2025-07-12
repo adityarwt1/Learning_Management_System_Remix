@@ -15,6 +15,7 @@ import type {
 import "./tailwind.css";
 import { Navbar } from "./components/Navbar";
 import { cookieToken } from "./utils/cookie.server";
+import { Toaster } from "sonner";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -52,7 +53,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body className="w-full ">
         <Navbar isAuthenticated={loaderData.isAuthenticated} />
         {children}
+        <Toaster />
         <ScrollRestoration />
+
         <Scripts />
       </body>
     </html>
