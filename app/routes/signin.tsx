@@ -35,7 +35,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     // Success: set cookie and redirect
-    return redirect("/dashboard", {
+    return redirect("/profile", {
       headers: {
         "Set-Cookie": await cookieToken.serialize(user),
       },
