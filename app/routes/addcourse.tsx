@@ -3,6 +3,7 @@ import { useLoaderData } from "@remix-run/react";
 import { cookieToken } from "~/utils/cookie.server";
 import { connectDB } from "~/lib/mongodb";
 import User from "~/models/User";
+import { useEffect } from "react";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -22,11 +23,7 @@ export const loader: LoaderFunction = async ({
   }
 
   if (user.role !== "instructor") {
-    return redirect("/profile", {
-      headers: {
-        role: "redirectedFrom the add course",
-      },
-    });
+    return redirect("/profile?message=instructor");
   }
 
   return { user };
