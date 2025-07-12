@@ -13,7 +13,7 @@ import { Search } from "lucide-react";
 import { Input } from "app/components/ui/input";
 import { Button } from "app/components/ui/button";
 
-export function Navbar() {
+export function Navbar({ isAuthenticated }: { isAuthenticated: boolean }) {
   return (
     <nav className="w-full border-b px-6 py-4 flex items-center justify-between bg-white shadow-sm">
       {/* Left: Logo */}
@@ -90,17 +90,22 @@ export function Navbar() {
         </NavigationMenu>
 
         {/* Auth Buttons */}
-        <Button asChild variant="outline">
-          <Link to="/signup">Sign Up</Link>
-        </Button>
-        <Button asChild>
-          <Link to="/signin">Sign In</Link>
-        </Button>
-
-        <Avatar className="h-8 w-8 cursor-pointer">
-          <AvatarImage src="/favicon.ico" />
-          <AvatarFallback>P</AvatarFallback>
-        </Avatar>
+        {!isAuthenticated && (
+          <>
+            <Button asChild variant="outline">
+              <Link to="/signup">Sign Up</Link>
+            </Button>
+            <Button asChild>
+              <Link to="/signin">Sign In</Link>
+            </Button>
+          </>
+        )}
+        <Link to="/profile">
+          <Avatar className="h-8 w-8 cursor-pointer">
+            <AvatarImage src="/favicon.ico" />
+            <AvatarFallback>P</AvatarFallback>
+          </Avatar>
+        </Link>
       </div>
     </nav>
   );

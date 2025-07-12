@@ -4,11 +4,17 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import type {
+  LinksFunction,
+  LoaderFunction,
+  LoaderFunctionArgs,
+} from "@remix-run/node";
 
 import "./tailwind.css";
 import { Navbar } from "./components/Navbar";
+import { cookieToken } from "./utils/cookie.server";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -23,7 +29,18 @@ export const links: LinksFunction = () => [
   },
 ];
 
+export const loader: LoaderFunction = async ({
+  request,
+}: LoaderFunctionArgs) => {
+  const coookieheader = request.headers.get("cookie");
+  const user = await cookieToken.parse(coookieheader);
+  return {
+    isAuthenticated: user ? true : false,
+  };
+};
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const loaderData = useLoaderData<typeof loader>();
   return (
     <html lang="en">
       <head>
@@ -33,7 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="w-full ">
-        <Navbar />
+        <Navbar isAuthenticated={loaderData.isAuthenticated} />
         {children}
         <ScrollRestoration />
         <Scripts />
