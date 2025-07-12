@@ -1,9 +1,13 @@
-import { LoaderFunction, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import {
+  LoaderFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+  redirect,
+} from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { cookieToken } from "~/utils/cookie.server";
 import { connectDB } from "~/lib/mongodb";
 import User from "~/models/User";
-import { useEffect } from "react";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -27,6 +31,17 @@ export const loader: LoaderFunction = async ({
   }
 
   return { user };
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data?.user) {
+    return [{ title: "Add Course - LMS" }];
+  }
+
+  return [
+    { title: `Add Course - ${data?.user?.name || "Instructor"} | LMS` },
+    { name: "description", content: `Add a new course as ${data.user.name}` },
+  ];
 };
 
 export default function AddCoursePage() {
