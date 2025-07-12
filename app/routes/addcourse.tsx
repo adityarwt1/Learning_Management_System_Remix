@@ -24,7 +24,7 @@ export const loader: LoaderFunction = async ({
   if (user.role !== "instructor") {
     return redirect("/profile", {
       headers: {
-        Role: "redirectedFrom the add course",
+        role: "redirectedFrom the add course",
       },
     });
   }

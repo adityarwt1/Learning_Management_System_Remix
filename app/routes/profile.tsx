@@ -21,6 +21,8 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { useLoaderData, useFetcher, useNavigation } from "@remix-run/react";
 import { Link } from "@remix-run/react";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 type ActionData = {
   error?: string;
@@ -32,7 +34,8 @@ export const loader: LoaderFunction = async ({
 }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get("Cookie");
   const userData = await cookieToken.parse(cookieHeader);
-
+  const url = new URL(request.url);
+  const message = url.searchParams.get("message");
   if (!userData) {
     return redirect("/signin");
   }
@@ -44,7 +47,7 @@ export const loader: LoaderFunction = async ({
     return redirect("/signin");
   }
 
-  return json({ user });
+  return json({ user, message });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -73,10 +76,19 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function UserProfilePage() {
-  const { user } = useLoaderData<typeof loader>();
+  const { user, message } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<ActionData>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+
+  // Use useEffect to show toast only when message changes
+  useEffect(() => {
+    if (message === "instructor") {
+      toast.error("You need to become instructor to add course", {
+        duration: 10000,
+      });
+    }
+  }, [message]); // Only run when message changes
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
