@@ -46,10 +46,10 @@ export function Navbar({ isAuthenticated }: { isAuthenticated: boolean }) {
                   <li>
                     <NavigationMenuLink asChild>
                       <Link
-                        to="/dashboard"
+                        to="/courses"
                         className="block px-4 py-2 hover:bg-gray-100 rounded transition-colors"
                       >
-                        Dashboard
+                        Courses
                       </Link>
                     </NavigationMenuLink>
                   </li>
