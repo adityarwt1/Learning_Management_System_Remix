@@ -6,6 +6,7 @@ interface Course extends Document {
   description: string;
   rating: number;
   votes: number;
+  instroductionVideo: string;
 }
 
 const CourseSchema: Schema<Course> = new Schema({
@@ -26,6 +27,10 @@ const CourseSchema: Schema<Course> = new Schema({
   },
   votes: {
     type: Number,
+  },
+  instroductionVideo: {
+    type: String,
+    required: true,
   },
 });
 

@@ -36,24 +36,6 @@ export default function AddCoursePage() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // You'll implement the actual submission logic
-      console.log("Form data to submit:", formData);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      return redirect("/courses");
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Add state for image preview
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -121,7 +103,24 @@ export default function AddCoursePage() {
       setIsVideoUploading(false);
     }
   };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
+    try {
+      // You'll implement the actual submission logic
+      console.log("Form data to submit:", formData);
+      console.log(thumbnailPreview, videoPreview);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      return redirect("/courses");
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="container py-8">
       <Card className="mx-auto max-w-2xl">
