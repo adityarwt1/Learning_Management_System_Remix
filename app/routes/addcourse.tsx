@@ -61,6 +61,10 @@ export default function AddCoursePage() {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  // Add these state variables after your existing state
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [isVideoUploading, setIsVideoUploading] = useState(false);
+
   // Image upload function from image.tsx
   const base64Image = async (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -94,6 +98,40 @@ export default function AddCoursePage() {
       console.error("Upload failed:", error);
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  // Add video upload function
+  const base64Video = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle video upload
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsVideoUploading(true);
+    try {
+      const videoUrl = await base64Video(file);
+      setVideoPreview(videoUrl);
+
+      // Upload to server (you can create a similar /video route)
+      const formData = new FormData();
+      formData.append("url", videoUrl);
+      // submit(formData, {
+      //   method: "POST",
+      //   action: "/video",
+      // });
+    } catch (error) {
+      console.error("Video upload failed:", error);
+    } finally {
+      setIsVideoUploading(false);
     }
   };
 
@@ -198,31 +236,63 @@ export default function AddCoursePage() {
                   <Video className="h-4 w-4" />
                   Introduction Video *
                 </Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                  <Input
-                    id="video"
-                    name="video"
-                    type="file"
-                    accept="video/*"
-                    required
-                    className="hidden"
-                  />
-                  <label htmlFor="video" className="cursor-pointer">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="p-3 bg-green-100 rounded-full">
-                        <Video className="h-6 w-6 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          Click to upload video
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          MP4, MOV up to 100MB
-                        </p>
-                      </div>
+
+                {videoPreview ? (
+                  <div className="space-y-3">
+                    <div className="relative">
+                      <video
+                        src={videoPreview}
+                        controls
+                        className="w-full h-48 object-cover rounded-lg border"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="absolute top-2 right-2"
+                        onClick={() => setVideoPreview(null)}
+                      >
+                        Remove
+                      </Button>
                     </div>
-                  </label>
-                </div>
+                    <p className="text-sm text-green-600">
+                      ✓ Video uploaded successfully
+                    </p>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                    <Input
+                      id="video"
+                      name="video"
+                      type="file"
+                      accept="video/*"
+                      required
+                      className="hidden"
+                      onChange={handleVideoUpload}
+                    />
+                    <label htmlFor="video" className="cursor-pointer">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="p-3 bg-green-100 rounded-full">
+                          {isVideoUploading ? (
+                            <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <Video className="h-6 w-6 text-green-600" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">
+                            {isVideoUploading
+                              ? "Uploading..."
+                              : "Click to upload video"}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            MP4, MOV up to 100MB
+                          </p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                )}
               </div>
             </div>
 
