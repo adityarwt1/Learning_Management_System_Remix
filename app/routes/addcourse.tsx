@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
-import { json, redirect } from "@remix-run/react";
+import { json, redirect, useActionData } from "@remix-run/react";
 import { Upload, Image, Video, CctvIcon } from "lucide-react";
 import {
   LoaderFunction,
@@ -27,6 +27,8 @@ import { useSubmit } from "@remix-run/react";
 import { Badge } from "~/components/ui/badge";
 import { BookOpen } from "lucide-react";
 import { cookieToken } from "~/utils/cookie.server";
+import { connectDB } from "~/lib/mongodb";
+import Course from "~/models/courseOverView";
 
 type ActionData = {
   error?: string;
@@ -50,8 +52,23 @@ export const action: ActionFunction = async ({
   request,
 }: ActionFunctionArgs) => {
   const formdata = await request.formData();
-  console.log("formdata ", formdata);
-  if (formdata.has("create")) {
+  if (formdata.has("createcourse")) {
+    //// extracting the data from the from
+    const title = formdata.get("title");
+    const thumbnail = formdata.get("thumbnail");
+    const description = formdata.get("description");
+    const instroductionVideo = formdata.get("instroductionVideo");
+
+    ///saving the course to the db
+    await connectDB();
+    const course = new Course({
+      title,
+      thumbnail,
+      description,
+      instroductionVideo,
+    });
+    await course.save();
+    return json({ message: "course saved", id: course._id });
   }
   return json({ message: "hello" });
 };
@@ -61,7 +78,11 @@ export default function AddCoursePage() {
   const navigation = useNavigation();
   const submit = useSubmit();
   const isSubmitting = navigation.state === "submitting";
-
+  const actiondata = useActionData<typeof action>();
+  const id = actiondata ? actiondata.id : null;
+  if (id) {
+    console.log("returned id ", id);
+  }
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",

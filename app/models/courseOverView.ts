@@ -9,30 +9,33 @@ interface Course extends Document {
   instroductionVideo: string;
 }
 
-const CourseSchema: Schema<Course> = new Schema({
-  title: {
-    type: String,
-    required: true,
+const CourseSchema: Schema<Course> = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    thumbnail: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    rating: {
+      type: Number,
+    },
+    votes: {
+      type: Number,
+    },
+    instroductionVideo: {
+      type: String,
+      required: true,
+    },
   },
-  thumbnail: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  rating: {
-    type: Number,
-  },
-  votes: {
-    type: Number,
-  },
-  instroductionVideo: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamps: true }
+);
 
 const Course =
   mongoose.models.Course || mongoose.model<Course>("Course", CourseSchema);
