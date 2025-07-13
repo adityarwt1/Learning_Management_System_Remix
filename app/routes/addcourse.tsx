@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSubmit } from "@remix-run/react";
 import {
   Card,
   CardHeader,
@@ -55,6 +56,46 @@ export default function AddCoursePage() {
     }
   };
 
+  // Add state for image preview
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Image upload function from image.tsx
+  const base64Image = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle thumbnail upload
+  const handleThumbnailUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const imageUrl = await base64Image(file);
+      setThumbnailPreview(imageUrl);
+
+      // Upload to server
+      const formData = new FormData();
+      formData.append("url", imageUrl);
+      // submit(formData, {
+      //   method: "POST",
+      //   action: "/image",
+      // });
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <div className="container py-8">
       <Card className="mx-auto max-w-2xl">
@@ -89,31 +130,62 @@ export default function AddCoursePage() {
                   <Image className="h-4 w-4" />
                   Course Thumbnail *
                 </Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                  <Input
-                    id="thumbnail"
-                    name="thumbnail"
-                    type="file"
-                    accept="image/*"
-                    required
-                    className="hidden"
-                  />
-                  <label htmlFor="thumbnail" className="cursor-pointer">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="p-3 bg-blue-100 rounded-full">
-                        <Upload className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">
-                          Click to upload thumbnail
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          PNG, JPG up to 5MB
-                        </p>
-                      </div>
+                {thumbnailPreview ? (
+                  <div className="space-y-3">
+                    <div className="relative">
+                      <img
+                        src={thumbnailPreview}
+                        alt="Thumbnail preview"
+                        className="w-full h-48 object-cover rounded-lg border"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="absolute top-2 right-2"
+                        onClick={() => setThumbnailPreview(null)}
+                      >
+                        Remove
+                      </Button>
                     </div>
-                  </label>
-                </div>
+                    <p className="text-sm text-green-600">
+                      ✓ Thumbnail uploaded successfully
+                    </p>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                    <Input
+                      id="thumbnail"
+                      name="thumbnail"
+                      type="file"
+                      accept="image/*"
+                      required
+                      className="hidden"
+                      onChange={handleThumbnailUpload}
+                    />
+                    <label htmlFor="thumbnail" className="cursor-pointer">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="p-3 bg-blue-100 rounded-full">
+                          {isUploading ? (
+                            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <Upload className="h-6 w-6 text-blue-600" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">
+                            {isUploading
+                              ? "Uploading..."
+                              : "Click to upload thumbnail"}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            PNG, JPG up to 5MB
+                          </p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                )}
               </div>
 
               {/* Video Upload */}
