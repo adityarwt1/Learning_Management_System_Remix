@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
-import { redirect } from "@remix-run/react";
+import { json, redirect } from "@remix-run/react";
 import { Upload, Image, Video, CctvIcon } from "lucide-react";
 import {
   LoaderFunction,
@@ -53,7 +53,7 @@ export const action: ActionFunction = async ({
   console.log("formdata ", formdata);
   if (formdata.has("create")) {
   }
-  return {};
+  return json({ message: "hello" });
 };
 export default function AddCoursePage() {
   const { user } = useLoaderData<typeof loader>();
@@ -97,9 +97,7 @@ export default function AddCoursePage() {
   };
 
   // Handle thumbnail upload
-  const handleThumbnailUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleImagePreview = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -107,9 +105,6 @@ export default function AddCoursePage() {
     try {
       const imageUrl = await base64Image(file);
       setThumbnailPreview(imageUrl);
-
-      const formData = new FormData();
-      formData.append("url", imageUrl);
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {
@@ -128,7 +123,7 @@ export default function AddCoursePage() {
   };
 
   // Handle video upload
-  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoPreview = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -136,9 +131,6 @@ export default function AddCoursePage() {
     try {
       const videoUrl = await base64Video(file);
       setVideoPreview(videoUrl);
-
-      const formData = new FormData();
-      formData.append("url", videoUrl);
     } catch (error) {
       console.error("Video upload failed:", error);
     } finally {
@@ -150,13 +142,6 @@ export default function AddCoursePage() {
     setLoading(true);
 
     try {
-      // You'll implement the actual submission logic
-      console.log("Form data to submit:", formData);
-      console.log(thumbnailPreview, videoPreview);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       return redirect("/courses");
     } catch (error) {
     } finally {
@@ -297,7 +282,7 @@ export default function AddCoursePage() {
                               accept="image/*"
                               required
                               className="hidden"
-                              onChange={handleThumbnailUpload}
+                              onChange={handleImagePreview}
                             />
                             <label
                               htmlFor="thumbnail"
@@ -368,7 +353,7 @@ export default function AddCoursePage() {
                               accept="video/*"
                               required
                               className="hidden"
-                              onChange={handleVideoUpload}
+                              onChange={handleVideoPreview}
                             />
                             <label htmlFor="video" className="cursor-pointer">
                               <div className="flex flex-col items-center gap-2">
