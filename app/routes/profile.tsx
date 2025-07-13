@@ -4,6 +4,7 @@ import {
   ActionFunction,
   json,
   redirect,
+  MetaFunction,
 } from "@remix-run/node";
 import { cookieToken } from "~/utils/cookie.server";
 import { connectDB } from "~/lib/mongodb";
@@ -36,6 +37,7 @@ export const loader: LoaderFunction = async ({
   const userData = await cookieToken.parse(cookieHeader);
   const url = new URL(request.url);
   const message = url.searchParams.get("message");
+
   if (!userData) {
     return redirect("/signin");
   }
@@ -50,6 +52,16 @@ export const loader: LoaderFunction = async ({
   return json({ user, message });
 };
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data?.user) {
+    return [{ title: "Profile - LMS" }];
+  }
+
+  return [
+    { title: `${data.user.name}'s Profile | LMS` },
+    { name: "description", content: `Profile page for ${data.user.name}` },
+  ];
+};
 export const action: ActionFunction = async ({ request }) => {
   const cookieHeader = request.headers.get("Cookie");
   const userData = await cookieToken.parse(cookieHeader);

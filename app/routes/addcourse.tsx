@@ -1,4 +1,9 @@
-import { LoaderFunction, LoaderFunctionArgs, redirect } from "@remix-run/node";
+import {
+  LoaderFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+  redirect,
+} from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { connectDB } from "~/lib/mongodb";
 import User from "~/models/User";
@@ -13,15 +18,21 @@ export const loader: LoaderFunction = async ({
   if (!user) {
     return redirect("/signin");
   }
-  if (user) {
-    await connectDB();
-    const userdata = await User.findOne({ email: user.email });
-    return userdata;
-  }
+  return {
+    user,
+  };
 };
 
 export default function AddCourse() {
-  const user = useLoaderData<typeof loader>();
-  console.log("loader data", user);
-  return <div>Hello</div>;
+  const { user } = useLoaderData<typeof loader>();
+  return (
+    <>
+      <div>Hello</div>
+      <div>Hello</div>
+    </>
+  );
 }
+
+export const meta: MetaFunction = () => {
+  return [{ title: "Add Course" }];
+};
