@@ -15,6 +15,7 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
 import { redirect } from "@remix-run/react";
+import { Upload, Image, Video } from "lucide-react";
 
 export default function AddCoursePage() {
   const [loading, setLoading] = useState(false);
@@ -77,16 +78,79 @@ export default function AddCoursePage() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="thumbnail">Thumbnail URL</Label>
-              <Input
-                id="thumbnail"
-                name="thumbnail"
-                value={formData.thumbnail}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-                required
-              />
+            {/* File Uploads */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Thumbnail Upload */}
+              <div className="space-y-3">
+                <Label
+                  htmlFor="thumbnail"
+                  className="text-sm font-medium flex items-center gap-2"
+                >
+                  <Image className="h-4 w-4" />
+                  Course Thumbnail *
+                </Label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                  <Input
+                    id="thumbnail"
+                    name="thumbnail"
+                    type="file"
+                    accept="image/*"
+                    required
+                    className="hidden"
+                  />
+                  <label htmlFor="thumbnail" className="cursor-pointer">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="p-3 bg-blue-100 rounded-full">
+                        <Upload className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">
+                          Click to upload thumbnail
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          PNG, JPG up to 5MB
+                        </p>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Video Upload */}
+              <div className="space-y-3">
+                <Label
+                  htmlFor="video"
+                  className="text-sm font-medium flex items-center gap-2"
+                >
+                  <Video className="h-4 w-4" />
+                  Introduction Video *
+                </Label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                  <Input
+                    id="video"
+                    name="video"
+                    type="file"
+                    accept="video/*"
+                    required
+                    className="hidden"
+                  />
+                  <label htmlFor="video" className="cursor-pointer">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="p-3 bg-green-100 rounded-full">
+                        <Video className="h-6 w-6 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">
+                          Click to upload video
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          MP4, MOV up to 100MB
+                        </p>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -100,36 +164,6 @@ export default function AddCoursePage() {
                 rows={5}
                 required
               />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="rating">Initial Rating</Label>
-                <Input
-                  id="rating"
-                  name="rating"
-                  type="number"
-                  min="0"
-                  max="5"
-                  step="0.1"
-                  value={formData.rating}
-                  onChange={handleChange}
-                  placeholder="0-5"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="votes">Initial Votes</Label>
-                <Input
-                  id="votes"
-                  name="votes"
-                  type="number"
-                  min="0"
-                  value={formData.votes}
-                  onChange={handleChange}
-                  placeholder="Number of votes"
-                />
-              </div>
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
