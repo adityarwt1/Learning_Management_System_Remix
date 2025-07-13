@@ -16,7 +16,7 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
 import { redirect } from "@remix-run/react";
-import { Upload, Image, Video } from "lucide-react";
+import { Upload, Image, Video, CctvIcon } from "lucide-react";
 import { MetaFunction } from "@remix-run/node";
 
 export default function AddCoursePage() {
