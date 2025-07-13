@@ -13,6 +13,8 @@ import {
   LoaderFunction,
   MetaFunction,
   LoaderFunctionArgs,
+  ActionFunction,
+  ActionFunctionArgs,
 } from "@remix-run/node";
 import {
   Accordion,
@@ -42,6 +44,16 @@ export const loader: LoaderFunction = async ({
   return {
     user,
   };
+};
+
+export const action: ActionFunction = async ({
+  request,
+}: ActionFunctionArgs) => {
+  const formdata = await request.formData();
+  console.log("formdata ", formdata);
+  if (formdata.has("create")) {
+  }
+  return {};
 };
 export default function AddCoursePage() {
   const { user } = useLoaderData<typeof loader>();
@@ -196,11 +208,7 @@ export default function AddCoursePage() {
             <AccordionContent className="px-6 pb-6">
               <Card className="border-0 shadow-none">
                 <CardContent className="p-0">
-                  <fetcher.Form
-                    method="post"
-                    encType="multipart/form-data"
-                    className="space-y-6"
-                  >
+                  <form className="space-y-6" onSubmit={handleSubmit}>
                     {/* Course Title */}
                     <div className="space-y-2">
                       <Label
@@ -216,6 +224,9 @@ export default function AddCoursePage() {
                         required
                         placeholder="Enter your course title"
                         className="w-full h-12 text-lg"
+                        onChange={(e) => {
+                          setFormData({ ...formData, title: e.target.value });
+                        }}
                       />
                     </div>
 
@@ -234,6 +245,12 @@ export default function AddCoursePage() {
                         placeholder="Describe what students will learn in this course..."
                         className="w-full min-h-[120px] resize-none"
                         rows={5}
+                        onChange={(e) => {
+                          setFormData({
+                            ...formData,
+                            description: e.target.value,
+                          });
+                        }}
                       />
                     </div>
 
@@ -392,12 +409,13 @@ export default function AddCoursePage() {
 
                     <Button
                       type="submit"
+                      name="create"
                       disabled={isSubmitting || isUploading}
                       className="w-full"
                     >
                       {isSubmitting ? "Creating Course..." : "Create Course"}
                     </Button>
-                  </fetcher.Form>
+                  </form>
                 </CardContent>
               </Card>
             </AccordionContent>
