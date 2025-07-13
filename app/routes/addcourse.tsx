@@ -23,10 +23,7 @@ export default function AddCoursePage() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
-    thumbnail: "",
     description: "",
-    rating: 0,
-    votes: 0,
   });
 
   const handleChange = (
@@ -87,13 +84,8 @@ export default function AddCoursePage() {
       const imageUrl = await base64Image(file);
       setThumbnailPreview(imageUrl);
 
-      // Upload to server
       const formData = new FormData();
       formData.append("url", imageUrl);
-      // submit(formData, {
-      //   method: "POST",
-      //   action: "/image",
-      // });
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {
@@ -121,13 +113,8 @@ export default function AddCoursePage() {
       const videoUrl = await base64Video(file);
       setVideoPreview(videoUrl);
 
-      // Upload to server (you can create a similar /video route)
       const formData = new FormData();
       formData.append("url", videoUrl);
-      // submit(formData, {
-      //   method: "POST",
-      //   action: "/video",
-      // });
     } catch (error) {
       console.error("Video upload failed:", error);
     } finally {
