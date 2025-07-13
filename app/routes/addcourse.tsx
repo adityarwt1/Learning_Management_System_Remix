@@ -141,8 +141,23 @@ export default function AddCoursePage() {
     e.preventDefault();
     setLoading(true);
 
+    if (
+      !formData.title ||
+      !formData.description ||
+      !thumbnailPreview ||
+      !videoPreview
+    )
+      return;
     try {
-      return redirect("/courses");
+      const formdata = new FormData();
+      formdata.append("title", formData.title);
+      formdata.append("thumbnail", thumbnailPreview);
+      formdata.append("description", formData.description);
+      formdata.append("instroductionVideo", videoPreview);
+      formdata.append("createcourse", "true");
+      fetcher.submit(formdata, {
+        method: "POST",
+      });
     } catch (error) {
     } finally {
       setLoading(false);
