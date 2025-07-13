@@ -33,15 +33,28 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = async ({
   request,
 }: LoaderFunctionArgs) => {
-  const coookieheader = request.headers.get("cookie");
-  const user = await cookieToken.parse(coookieheader);
-  return {
-    isAuthenticated: user ? true : false,
-  };
+  try {
+    const cookieHeader = request.headers.get("cookie");
+    const user = await cookieToken.parse(cookieHeader);
+    return {
+      isAuthenticated: !!user,
+      user: user || null,
+    };
+  } catch (error) {
+    return {
+      isAuthenticated: false,
+      user: null,
+    };
+  }
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const loaderData = useLoaderData<typeof loader>();
+
+  // Add fallback values to prevent undefined errors
+  const isAuthenticated = loaderData?.isAuthenticated ?? false;
+  const user = loaderData?.user ?? null;
+
   return (
     <html lang="en">
       <head>
@@ -50,12 +63,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="w-full ">
-        <Navbar isAuthenticated={loaderData.isAuthenticated} />
+      <body className="w-full">
+        <Navbar isAuthenticated={isAuthenticated} />
         {children}
         <Toaster />
         <ScrollRestoration />
-
         <Scripts />
       </body>
     </html>
