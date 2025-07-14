@@ -162,7 +162,7 @@ export default function AddCoursePage() {
     e.preventDefault();
     setLoading(true);
 
-    if (
+    if (    
       !formData.title ||
       !formData.description ||
       !thumbnailPreview ||
