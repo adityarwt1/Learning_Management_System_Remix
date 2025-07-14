@@ -60,7 +60,7 @@ export const action: ActionFunction = async ({
     const instroductionVideo = formdata.get("instroductionVideo");
 
     ///saving the course to the db
-    await connectDB();
+    await connectDB();     
     const course = new Course({
       title,
       thumbnail,
